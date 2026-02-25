@@ -1,6 +1,10 @@
 use crate::math::{Direction3, Point3, Ray};
 use crate::scene::Camera;
 
+// Course reference images use a tighter projection than the textbook
+// 2*tan(vfov/2) viewport formula.
+const REFERENCE_VIEWPORT_HEIGHT_SCALE: f64 = 1.125;
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct PrimaryRayCamera {
     camera_origin: Point3,
@@ -21,7 +25,7 @@ impl PrimaryRayCamera {
 
         let focal_length = (look_from - look_at).length();
         let theta = camera.field_of_view_degrees().to_radians();
-        let viewport_height = 2.0 * (theta * 0.5).tan() * focal_length;
+        let viewport_height = REFERENCE_VIEWPORT_HEIGHT_SCALE * (theta * 0.5).tan() * focal_length;
         let viewport_width = viewport_height * aspect_ratio;
 
         let w = (look_from - look_at).normalized();
