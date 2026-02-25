@@ -1,3 +1,6 @@
 fn main() {
-    println!("Hello, world!");
+    if let Err(error) = raytracer::run() {
+        eprintln!("raytracer: {error}");
+        std::process::exit(1);
+    }
 }
