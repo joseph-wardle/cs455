@@ -28,6 +28,26 @@ pub fn closest_sphere_hit(
     closest_hit
 }
 
+pub fn any_sphere_hit(
+    ray: Ray,
+    spheres: &[Sphere],
+    t_min: f64,
+    t_max: f64,
+    excluded_sphere_index: Option<usize>,
+) -> bool {
+    for (sphere_index, sphere) in spheres.iter().enumerate() {
+        if excluded_sphere_index == Some(sphere_index) {
+            continue;
+        }
+
+        if intersect_sphere(ray, sphere, sphere_index, t_min, t_max).is_some() {
+            return true;
+        }
+    }
+
+    false
+}
+
 fn intersect_sphere(
     ray: Ray,
     sphere: &Sphere,
@@ -73,7 +93,7 @@ mod tests {
     use crate::math::{Point3, Ray, Vec3};
     use crate::scene::{Material, Sphere};
 
-    use super::closest_sphere_hit;
+    use super::{any_sphere_hit, closest_sphere_hit};
 
     const EPSILON: f64 = 1.0e-12;
 
@@ -132,5 +152,18 @@ mod tests {
 
         let hit = closest_sphere_hit(ray, &[sphere], 0.0, 0.5);
         assert!(hit.is_none());
+    }
+
+    #[test]
+    fn any_hit_respects_excluded_sphere_index() {
+        let ray = Ray::new(Point3::new(0.0, 0.0, 1.0), Vec3::new(0.0, 0.0, -1.0));
+        let sphere = test_sphere(Point3::new(0.0, 0.0, 0.0), 0.4);
+
+        let has_hit_without_exclusion =
+            any_sphere_hit(ray, &[sphere.clone()], 1.0e-6, f64::INFINITY, None);
+        let has_hit_with_exclusion = any_sphere_hit(ray, &[sphere], 1.0e-6, f64::INFINITY, Some(0));
+
+        assert!(has_hit_without_exclusion);
+        assert!(!has_hit_with_exclusion);
     }
 }
