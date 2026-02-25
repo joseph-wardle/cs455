@@ -32,4 +32,14 @@ impl RenderImage {
     pub fn as_rgb8(&self) -> &[u8] {
         &self.pixels_rgb8
     }
+
+    pub fn set_pixel_rgb8(&mut self, x: u32, y: u32, color: [u8; 3]) {
+        assert!(x < self.width, "pixel x is out of bounds");
+        assert!(y < self.height, "pixel y is out of bounds");
+
+        let offset = ((y as usize) * (self.width as usize) + (x as usize)) * 3;
+        self.pixels_rgb8[offset] = color[0];
+        self.pixels_rgb8[offset + 1] = color[1];
+        self.pixels_rgb8[offset + 2] = color[2];
+    }
 }
