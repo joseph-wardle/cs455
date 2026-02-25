@@ -34,7 +34,7 @@ impl Renderer {
     }
 
     pub fn render(&self, scene: &Scene) -> RenderImage {
-        let background_rgb8 = scene.lighting.background_color.to_rgb8();
+        let background_rgb8 = scene.lighting().background_color().to_rgb8();
         RenderImage::new_solid(
             self.config.image_width,
             self.config.image_height,

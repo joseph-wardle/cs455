@@ -2,9 +2,9 @@ use super::{Camera, Lighting, Sphere};
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Scene {
-    pub camera: Camera,
-    pub lighting: Lighting,
-    pub spheres: Vec<Sphere>,
+    camera: Camera,
+    lighting: Lighting,
+    spheres: Vec<Sphere>,
 }
 
 impl Scene {
@@ -14,6 +14,18 @@ impl Scene {
             lighting,
             spheres,
         }
+    }
+
+    pub const fn camera(&self) -> &Camera {
+        &self.camera
+    }
+
+    pub const fn lighting(&self) -> &Lighting {
+        &self.lighting
+    }
+
+    pub fn spheres(&self) -> &[Sphere] {
+        &self.spheres
     }
 }
 
