@@ -122,7 +122,7 @@ mod tests {
     #[test]
     fn render_scene_file_to_png_writes_png_with_expected_dimensions() {
         let fixture_scene_path =
-            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../raytracer.part1.scene1.txt");
+            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../raytracer.part2.scene1.txt");
         let output_path = unique_temp_output_path();
 
         let render_result =
