@@ -10,7 +10,7 @@ use thiserror::Error;
 
 use crate::io::write_png;
 use crate::render::{RenderConfig, Renderer};
-use crate::scene::{parse_scene_file, SceneParseError};
+use crate::scene::{SceneParseError, parse_scene_file};
 
 #[derive(Debug, Error)]
 pub enum AppError {
@@ -97,8 +97,8 @@ mod tests {
 
     use crate::render::RenderConfig;
 
-    use super::render_scene_file_to_png;
     use super::CliArguments;
+    use super::render_scene_file_to_png;
 
     #[test]
     fn cli_parser_accepts_two_arguments() {

@@ -471,7 +471,7 @@ impl SphereFieldsBuilder {
             self.start_line,
         )?;
 
-        let material = Material::try_new(kd, ks, ka, od, os, kgls)
+        let material = Material::try_new(kd, ks, ka, od, os, kgls, 0.0)
             .map_err(|source| self.map_validation_error(source))?;
 
         Sphere::try_new(center, radius, material)
@@ -699,7 +699,7 @@ impl SceneTextParser {
         let eof_line = self.eof_line.max(1);
         let camera = self.globals.build_camera(eof_line)?;
         let lighting = self.globals.build_lighting(eof_line)?;
-        Ok(Scene::new(camera, lighting, self.spheres))
+        Ok(Scene::new(camera, lighting, self.spheres, Vec::new()))
     }
 
     fn finish_current_sphere_if_any(&mut self) -> Result<(), SceneParseError> {

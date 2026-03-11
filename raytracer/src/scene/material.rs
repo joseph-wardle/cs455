@@ -11,6 +11,7 @@ pub struct Material {
     diffuse_color: ColorRgb,
     specular_color: ColorRgb,
     gloss_exponent: f64,
+    reflection_weight: f64,
 }
 
 impl Material {
@@ -21,6 +22,7 @@ impl Material {
         diffuse_color: ColorRgb,
         specular_color: ColorRgb,
         gloss_exponent: f64,
+        reflection_weight: f64,
     ) -> Result<Self, SceneValidationError> {
         validate_scalar_in_range("Kd", diffuse_weight, 0.0, 1.0)?;
         validate_scalar_in_range("Ks", specular_weight, 0.0, 1.0)?;
@@ -28,6 +30,7 @@ impl Material {
         validate_color_rgb("Od", diffuse_color)?;
         validate_color_rgb("Os", specular_color)?;
         validate_positive_scalar("Kgls", gloss_exponent)?;
+        validate_scalar_in_range("Refl", reflection_weight, 0.0, 1.0)?;
 
         Ok(Self {
             diffuse_weight,
@@ -36,6 +39,7 @@ impl Material {
             diffuse_color,
             specular_color,
             gloss_exponent,
+            reflection_weight,
         })
     }
 
@@ -62,6 +66,10 @@ impl Material {
     pub const fn gloss_exponent(&self) -> f64 {
         self.gloss_exponent
     }
+
+    pub const fn reflection_weight(&self) -> f64 {
+        self.reflection_weight
+    }
 }
 
 impl Default for Material {
@@ -73,6 +81,7 @@ impl Default for Material {
             ColorRgb::new(1.0, 1.0, 1.0),
             ColorRgb::new(1.0, 1.0, 1.0),
             16.0,
+            0.0,
         )
         .expect("default material values must be valid")
     }
@@ -91,6 +100,25 @@ mod tests {
             ColorRgb::new(1.0, 1.0, 1.0),
             ColorRgb::new(1.0, 1.0, 1.0),
             16.0,
+            0.0,
+        );
+
+        assert!(matches!(
+            result,
+            Err(SceneValidationError::ScalarOutOfRange { .. })
+        ));
+    }
+
+    #[test]
+    fn rejects_reflection_weight_outside_unit_interval() {
+        let result = Material::try_new(
+            0.7,
+            0.2,
+            0.1,
+            ColorRgb::new(1.0, 1.0, 1.0),
+            ColorRgb::new(1.0, 1.0, 1.0),
+            16.0,
+            1.1,
         );
 
         assert!(matches!(

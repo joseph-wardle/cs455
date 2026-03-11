@@ -77,7 +77,12 @@ mod tests {
 
     #[test]
     fn render_without_spheres_is_background_only() {
-        let scene = Scene::new(Camera::default(), Lighting::default(), Vec::new());
+        let scene = Scene::new(
+            Camera::default(),
+            Lighting::default(),
+            Vec::new(),
+            Vec::new(),
+        );
         let renderer = Renderer::new(RenderConfig::new(3, 3));
 
         let image = renderer.render(&scene);
@@ -97,6 +102,7 @@ mod tests {
             ColorRgb::new(1.0, 0.0, 0.0),
             ColorRgb::new(1.0, 1.0, 1.0),
             16.0,
+            0.0,
         )
         .expect("test material should be valid");
         let lighting = Lighting::try_new(
@@ -108,7 +114,7 @@ mod tests {
         .expect("test lighting should be valid");
         let sphere = Sphere::try_new(Point3::new(0.0, 0.0, 0.0), 0.4, material)
             .expect("test sphere should be valid");
-        let scene = Scene::new(Camera::default(), lighting, vec![sphere]);
+        let scene = Scene::new(Camera::default(), lighting, vec![sphere], Vec::new());
         let renderer = Renderer::new(RenderConfig::new(3, 3));
 
         let image = renderer.render(&scene);
@@ -124,6 +130,7 @@ mod tests {
             ColorRgb::new(1.0, 0.0, 0.0),
             ColorRgb::new(1.0, 1.0, 1.0),
             16.0,
+            0.0,
         )
         .expect("test material should be valid");
         let occluder_material = Material::default();
@@ -139,7 +146,12 @@ mod tests {
             .expect("test sphere should be valid");
         let occluder = Sphere::try_new(Point3::new(0.0, 0.25, 0.65), 0.1, occluder_material)
             .expect("test sphere should be valid");
-        let scene = Scene::new(Camera::default(), lighting, vec![lit_sphere, occluder]);
+        let scene = Scene::new(
+            Camera::default(),
+            lighting,
+            vec![lit_sphere, occluder],
+            Vec::new(),
+        );
         let renderer = Renderer::new(RenderConfig::new(3, 3));
 
         let image = renderer.render(&scene);
@@ -155,6 +167,7 @@ mod tests {
             ColorRgb::zero(),
             ColorRgb::new(1.0, 1.0, 1.0),
             16.0,
+            0.0,
         )
         .expect("test material should be valid");
         let lighting = Lighting::try_new(
@@ -166,7 +179,7 @@ mod tests {
         .expect("test lighting should be valid");
         let sphere = Sphere::try_new(Point3::new(0.0, 0.0, 0.0), 0.4, material)
             .expect("test sphere should be valid");
-        let scene = Scene::new(Camera::default(), lighting, vec![sphere]);
+        let scene = Scene::new(Camera::default(), lighting, vec![sphere], Vec::new());
         let renderer = Renderer::new(RenderConfig::new(3, 3));
 
         let image = renderer.render(&scene);
