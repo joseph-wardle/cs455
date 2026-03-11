@@ -10,7 +10,7 @@ use thiserror::Error;
 
 use crate::io::write_png;
 use crate::render::{RenderConfig, Renderer};
-use crate::scene::{SceneParseError, parse_scene_file};
+use crate::scene::{parse_scene_file, SceneParseError};
 
 #[derive(Debug, Error)]
 pub enum AppError {
@@ -97,8 +97,8 @@ mod tests {
 
     use crate::render::RenderConfig;
 
-    use super::CliArguments;
     use super::render_scene_file_to_png;
+    use super::CliArguments;
 
     #[test]
     fn cli_parser_accepts_two_arguments() {
@@ -122,7 +122,7 @@ mod tests {
     #[test]
     fn render_scene_file_to_png_writes_png_with_expected_dimensions() {
         let fixture_scene_path =
-            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../raytracer-scene_1.txt");
+            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../raytracer.part1.scene1.txt");
         let output_path = unique_temp_output_path();
 
         let render_result =

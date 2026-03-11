@@ -815,7 +815,7 @@ mod tests {
 
     #[test]
     fn parses_fixture_scene_1() {
-        let path = Path::new("../raytracer-scene_1.txt");
+        let path = Path::new("../raytracer.part1.scene1.txt");
         let scene = parse_scene_file(path).expect("fixture scene 1 should parse");
 
         assert_eq!(scene.spheres().len(), 1);
@@ -828,7 +828,7 @@ mod tests {
 
     #[test]
     fn parses_fixture_scene_2_with_commas() {
-        let path = Path::new("../raytracer-scene_2.txt");
+        let path = Path::new("../raytracer.part1.scene2.txt");
         let scene = parse_scene_file(path).expect("fixture scene 2 should parse");
 
         assert_eq!(scene.spheres().len(), 4);
