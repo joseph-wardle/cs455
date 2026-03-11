@@ -154,7 +154,12 @@ fn intersect_triangle(
     }
 
     let point = ray.at(distance);
-    let outward_normal = edge01.cross(edge02).normalized();
+    let geometric_normal = edge01.cross(edge02).normalized();
+    let outward_normal = if geometric_normal.dot(ray.direction) <= 0.0 {
+        geometric_normal
+    } else {
+        -geometric_normal
+    };
 
     Some(SurfaceHit {
         distance,
@@ -224,6 +229,19 @@ mod tests {
         assert_nearly_equal(hit.outward_normal.x, 0.0);
         assert_nearly_equal(hit.outward_normal.y, 0.0);
         assert_nearly_equal(hit.outward_normal.z, 1.0);
+    }
+
+    #[test]
+    fn ray_misses_triangle_returns_none() {
+        let ray = Ray::new(Point3::new(0.0, 0.9, 1.0), Vec3::new(0.0, 0.0, -1.0));
+        let triangle = test_triangle(
+            Point3::new(-0.5, -0.5, 0.0),
+            Point3::new(0.5, -0.5, 0.0),
+            Point3::new(0.0, 0.5, 0.0),
+        );
+
+        let hit = closest_scene_hit(ray, &[], &[triangle], 1.0e-6, f64::INFINITY);
+        assert!(hit.is_none());
     }
 
     #[test]

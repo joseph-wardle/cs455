@@ -1071,6 +1071,15 @@ mod tests {
 
     use super::*;
 
+    const EPSILON: f64 = 1.0e-12;
+
+    fn assert_nearly_equal(lhs: f64, rhs: f64) {
+        assert!(
+            (lhs - rhs).abs() < EPSILON,
+            "expected values to be nearly equal: lhs={lhs}, rhs={rhs}"
+        );
+    }
+
     #[test]
     fn parses_fixture_scene_1() {
         let path = Path::new("../raytracer.part2.scene1.txt");
@@ -1096,6 +1105,15 @@ mod tests {
             scene.spheres()[0].material().diffuse_color(),
             ColorRgb::new(1.0, 1.0, 1.0)
         );
+    }
+
+    #[test]
+    fn parses_refl_field_for_spheres_and_triangles() {
+        let path = Path::new("../raytracer.part2.scene1.txt");
+        let scene = parse_scene_file(path).expect("fixture scene 1 should parse");
+
+        assert_nearly_equal(scene.spheres()[0].material().reflection_weight(), 0.9);
+        assert_nearly_equal(scene.triangles()[0].material().reflection_weight(), 0.0);
     }
 
     #[test]

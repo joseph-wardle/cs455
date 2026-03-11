@@ -149,7 +149,7 @@ fn reflect_direction(incident_direction: Direction3, unit_normal: Direction3) ->
 #[cfg(test)]
 mod tests {
     use crate::math::{ColorRgb, Direction3, Point3};
-    use crate::scene::{Camera, Lighting, Material, Scene, Sphere};
+    use crate::scene::{Camera, Lighting, Material, Scene, Sphere, Triangle};
 
     use super::{RenderConfig, Renderer};
 
@@ -229,6 +229,48 @@ mod tests {
             lighting,
             vec![lit_sphere, occluder],
             Vec::new(),
+        );
+        let renderer = Renderer::new(RenderConfig::new(3, 3));
+
+        let image = renderer.render(&scene);
+        assert_eq!(image.pixel_rgb8(1, 1), [26, 0, 0]);
+    }
+
+    #[test]
+    fn center_pixel_in_shadow_from_triangle_keeps_only_ambient_component() {
+        let lit_sphere_material = Material::try_new(
+            1.0,
+            0.0,
+            1.0,
+            ColorRgb::new(1.0, 0.0, 0.0),
+            ColorRgb::new(1.0, 1.0, 1.0),
+            16.0,
+            0.0,
+        )
+        .expect("test material should be valid");
+        let occluder_material = Material::default();
+        let lighting = Lighting::try_new(
+            Direction3::new(0.0, 1.0, 1.0),
+            ColorRgb::new(1.0, 1.0, 1.0),
+            ColorRgb::new(0.1, 0.1, 0.1),
+            ColorRgb::new(0.2, 0.2, 0.2),
+        )
+        .expect("test lighting should be valid");
+
+        let lit_sphere = Sphere::try_new(Point3::new(0.0, 0.0, 0.0), 0.4, lit_sphere_material)
+            .expect("test sphere should be valid");
+        let occluder_triangle = Triangle::try_new(
+            Point3::new(-0.15, 0.15, 0.65),
+            Point3::new(0.15, 0.15, 0.65),
+            Point3::new(0.0, 0.45, 0.65),
+            occluder_material,
+        )
+        .expect("test triangle should be valid");
+        let scene = Scene::new(
+            Camera::default(),
+            lighting,
+            vec![lit_sphere],
+            vec![occluder_triangle],
         );
         let renderer = Renderer::new(RenderConfig::new(3, 3));
 
