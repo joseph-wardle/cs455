@@ -10,6 +10,7 @@ pub fn shade_hit_with_directional_light(
     scene: &Scene,
     hit: SurfaceHit,
     normalized_direction_to_light: Direction3,
+    incoming_ray_direction: Direction3,
 ) -> ColorRgb {
     let material = match hit.hit_object {
         HitObject::Sphere(sphere_index) => scene.spheres()[sphere_index].material(),
@@ -46,7 +47,7 @@ pub fn shade_hit_with_directional_light(
         .component_mul(material.diffuse_color())
         * (material.diffuse_weight() * ndotl);
 
-    let view_direction = (scene.camera().look_from() - hit.point).normalized();
+    let view_direction = (-incoming_ray_direction).normalized();
     let reflected_light = reflect_direction(-normalized_direction_to_light, unit_normal);
     let specular_alignment = reflected_light.dot(view_direction).max(0.0);
     let specular_strength =
