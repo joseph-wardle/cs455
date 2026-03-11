@@ -1,6 +1,6 @@
 use crate::scene::Scene;
 
-use super::{PrimaryRayCamera, RenderImage, closest_sphere_hit, shade_hit_with_directional_light};
+use super::{PrimaryRayCamera, RenderImage, closest_scene_hit, shade_hit_with_directional_light};
 
 const PRIMARY_RAY_T_MIN: f64 = 1.0e-6;
 
@@ -37,7 +37,6 @@ impl Renderer {
 
     pub fn render(&self, scene: &Scene) -> RenderImage {
         let background_rgb8 = scene.lighting().background_color().to_rgb8();
-        let spheres = scene.spheres();
         let normalized_direction_to_light = scene.lighting().direction_to_light().normalized();
         let mut image = RenderImage::new_solid(
             self.config.image_width,
@@ -53,8 +52,13 @@ impl Renderer {
         for pixel_y in 0..self.config.image_height {
             for pixel_x in 0..self.config.image_width {
                 let primary_ray = ray_camera.primary_ray_at(pixel_x, pixel_y);
-                let hit =
-                    closest_sphere_hit(primary_ray, spheres, PRIMARY_RAY_T_MIN, f64::INFINITY);
+                let hit = closest_scene_hit(
+                    primary_ray,
+                    scene.spheres(),
+                    scene.triangles(),
+                    PRIMARY_RAY_T_MIN,
+                    f64::INFINITY,
+                );
 
                 if let Some(hit) = hit {
                     let shaded_color =

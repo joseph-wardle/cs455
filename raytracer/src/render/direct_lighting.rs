@@ -1,7 +1,7 @@
 use crate::math::{ColorRgb, Direction3, Ray};
 use crate::scene::Scene;
 
-use super::{SurfaceHit, any_sphere_hit};
+use super::{HitObject, SurfaceHit, any_scene_hit};
 
 const SHADOW_RAY_BIAS: f64 = 1.0e-4;
 const SHADOW_RAY_T_MIN: f64 = 1.0e-6;
@@ -11,7 +11,10 @@ pub fn shade_hit_with_directional_light(
     hit: SurfaceHit,
     normalized_direction_to_light: Direction3,
 ) -> ColorRgb {
-    let material = scene.spheres()[hit.sphere_index].material();
+    let material = match hit.hit_object {
+        HitObject::Sphere(sphere_index) => scene.spheres()[sphere_index].material(),
+        HitObject::Triangle(triangle_index) => scene.triangles()[triangle_index].material(),
+    };
     let lighting = scene.lighting();
     let ambient = lighting
         .ambient_light()
@@ -26,12 +29,13 @@ pub fn shade_hit_with_directional_light(
 
     let shadow_ray_origin = hit.point + (SHADOW_RAY_BIAS * unit_normal);
     let shadow_ray = Ray::new(shadow_ray_origin, normalized_direction_to_light);
-    let hit_is_in_shadow = any_sphere_hit(
+    let hit_is_in_shadow = any_scene_hit(
         shadow_ray,
         scene.spheres(),
+        scene.triangles(),
         SHADOW_RAY_T_MIN,
         f64::INFINITY,
-        Some(hit.sphere_index),
+        Some(hit.hit_object),
     );
     if hit_is_in_shadow {
         return ambient;
